@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leave a Review | Spawn Seven</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="review.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="panel">
+      <a class="back-link" href="index.html">← Back to Home</a>
+      <p class="eyebrow">Spawn Seven Community</p>
+      <h1>Leave a Review!</h1>
+      <p class="intro">Tell us what you enjoy, what can improve, and how your experience has been in the server.</p>
+
+      <form
+        id="reviewForm"
+        class="review-form"
+        action="https://docs.google.com/forms/d/e/1FAIpQLScxbNYL5j9FP59fhcj09p0gSNGxJ0IRuxqlqX-tnl0T2clv3w/formResponse"
+        method="POST"
+        target="hidden_iframe"
+      >
+        <label for="rating">Stars</label>
+        <select id="rating" name="entry.420778289" required>
+          <option value="" disabled selected>Select a rating</option>
+          <option value="5">5 - Amazing</option>
+          <option value="4">4 - Great</option>
+          <option value="3">3 - Good</option>
+          <option value="2">2 - Fair</option>
+          <option value="1">1 - Needs work</option>
+        </select>
+
+        <label for="review">Why Did You Choose This Rating?</label>
+        <textarea
+          id="review"
+          name="entry.362929862"
+          rows="6"
+          placeholder="Share your thoughts..."
+          required
+        ></textarea>
+
+        <button type="submit">Submit Review</button>
+      </form>
+      <iframe name="hidden_iframe" title="hidden submit frame" style="display: none;"></iframe>
+
+      <p id="success" class="success" hidden>Thanks for your review. We appreciate your feedback.</p>
+      <p class="note">Submissions are now sent directly to our Google Form.</p>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('reviewForm');
+    const success = document.getElementById('success');
+
+    form.addEventListener('submit', function (event) {
+      success.hidden = false;
+      setTimeout(function () {
+        form.reset();
+      }, 350);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
