@@ -101,9 +101,11 @@
 
       <article class="roll-result" id="rollResult" aria-live="polite">
         <p class="roll-label">Your roll</p>
+        <img id="pokemonSprite" class="roll-sprite" src="" alt="" hidden />
         <h3 id="pokemonName">Press an emoji to start</h3>
         <p id="pokemonMeta">Type and rarity will appear here.</p>
       </article>
+      <p class="cooldown-text" id="cooldownText">Ready to roll.</p>
     </div>
   </section>
 
@@ -151,33 +153,33 @@
 
   <script>
     const pokemonPool = [
-      { name: 'Charmander', type: 'fire', rarity: 'Common' },
-      { name: 'Vulpix', type: 'fire', rarity: 'Common' },
-      { name: 'Growlithe', type: 'fire', rarity: 'Uncommon' },
-      { name: 'Cyndaquil', type: 'fire', rarity: 'Uncommon' },
-      { name: 'Magikarp', type: 'water', rarity: 'Common' },
-      { name: 'Psyduck', type: 'water', rarity: 'Common' },
-      { name: 'Squirtle', type: 'water', rarity: 'Uncommon' },
-      { name: 'Lapras', type: 'water', rarity: 'Rare' },
-      { name: 'Bulbasaur', type: 'grass', rarity: 'Uncommon' },
-      { name: 'Oddish', type: 'grass', rarity: 'Common' },
-      { name: 'Bellsprout', type: 'grass', rarity: 'Common' },
-      { name: 'Treecko', type: 'grass', rarity: 'Uncommon' },
-      { name: 'Pikachu', type: 'electric', rarity: 'Uncommon' },
-      { name: 'Mareep', type: 'electric', rarity: 'Common' },
-      { name: 'Shinx', type: 'electric', rarity: 'Common' },
-      { name: 'Electabuzz', type: 'electric', rarity: 'Rare' },
-      { name: 'Swinub', type: 'ice', rarity: 'Common' },
-      { name: 'Spheal', type: 'ice', rarity: 'Common' },
-      { name: 'Sneasel', type: 'ice', rarity: 'Uncommon' },
-      { name: 'Snorunt', type: 'ice', rarity: 'Uncommon' },
-      { name: 'Geodude', type: 'rock', rarity: 'Common' },
-      { name: 'Onix', type: 'rock', rarity: 'Uncommon' },
-      { name: 'Rhyhorn', type: 'rock', rarity: 'Uncommon' },
-      { name: 'Larvitar', type: 'rock', rarity: 'Rare' },
-      { name: 'Articuno', type: 'ice', rarity: 'Legendary' },
-      { name: 'Zapdos', type: 'electric', rarity: 'Legendary' },
-      { name: 'Moltres', type: 'fire', rarity: 'Legendary' }
+      { name: 'Charmander', type: 'fire', rarity: 'Common', id: 4 },
+      { name: 'Vulpix', type: 'fire', rarity: 'Common', id: 37 },
+      { name: 'Growlithe', type: 'fire', rarity: 'Uncommon', id: 58 },
+      { name: 'Cyndaquil', type: 'fire', rarity: 'Uncommon', id: 155 },
+      { name: 'Magikarp', type: 'water', rarity: 'Common', id: 129 },
+      { name: 'Psyduck', type: 'water', rarity: 'Common', id: 54 },
+      { name: 'Squirtle', type: 'water', rarity: 'Uncommon', id: 7 },
+      { name: 'Lapras', type: 'water', rarity: 'Rare', id: 131 },
+      { name: 'Bulbasaur', type: 'grass', rarity: 'Uncommon', id: 1 },
+      { name: 'Oddish', type: 'grass', rarity: 'Common', id: 43 },
+      { name: 'Bellsprout', type: 'grass', rarity: 'Common', id: 69 },
+      { name: 'Treecko', type: 'grass', rarity: 'Uncommon', id: 252 },
+      { name: 'Pikachu', type: 'electric', rarity: 'Uncommon', id: 25 },
+      { name: 'Mareep', type: 'electric', rarity: 'Common', id: 179 },
+      { name: 'Shinx', type: 'electric', rarity: 'Common', id: 403 },
+      { name: 'Electabuzz', type: 'electric', rarity: 'Rare', id: 125 },
+      { name: 'Swinub', type: 'ice', rarity: 'Common', id: 220 },
+      { name: 'Spheal', type: 'ice', rarity: 'Common', id: 363 },
+      { name: 'Sneasel', type: 'ice', rarity: 'Uncommon', id: 215 },
+      { name: 'Snorunt', type: 'ice', rarity: 'Uncommon', id: 361 },
+      { name: 'Geodude', type: 'rock', rarity: 'Common', id: 74 },
+      { name: 'Onix', type: 'rock', rarity: 'Uncommon', id: 95 },
+      { name: 'Rhyhorn', type: 'rock', rarity: 'Uncommon', id: 111 },
+      { name: 'Larvitar', type: 'rock', rarity: 'Rare', id: 246 },
+      { name: 'Articuno', type: 'ice', rarity: 'Legendary', id: 144 },
+      { name: 'Zapdos', type: 'electric', rarity: 'Legendary', id: 145 },
+      { name: 'Moltres', type: 'fire', rarity: 'Legendary', id: 146 }
     ];
 
     const typeEmoji = {
@@ -193,6 +195,72 @@
     const nameEl = document.getElementById('pokemonName');
     const metaEl = document.getElementById('pokemonMeta');
     const resultCard = document.getElementById('rollResult');
+    const spriteEl = document.getElementById('pokemonSprite');
+    const cooldownText = document.getElementById('cooldownText');
+    const cooldownDuration = 3;
+    let isCooldownActive = false;
+
+    function playRollSound() {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) {
+          return;
+        }
+
+        const audioContext = new AudioContextClass();
+        const now = audioContext.currentTime;
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        oscillator.type = 'triangle';
+        oscillator.frequency.setValueAtTime(840, now);
+        oscillator.frequency.exponentialRampToValueAtTime(420, now + 0.12);
+        oscillator.frequency.exponentialRampToValueAtTime(620, now + 0.2);
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+        oscillator.start(now);
+        oscillator.stop(now + 0.22);
+
+        oscillator.addEventListener('ended', function () {
+          audioContext.close();
+        });
+      } catch (error) {
+        // Ignore audio issues silently to keep rolling functional.
+      }
+    }
+
+    function setButtonsEnabled(enabled) {
+      buttons.forEach(function (button) {
+        button.disabled = !enabled;
+      });
+    }
+
+    function startCooldown() {
+      isCooldownActive = true;
+      setButtonsEnabled(false);
+
+      let timeLeft = cooldownDuration;
+      cooldownText.textContent = 'Cooldown: ' + timeLeft + 's';
+
+      const interval = setInterval(function () {
+        timeLeft -= 1;
+
+        if (timeLeft > 0) {
+          cooldownText.textContent = 'Cooldown: ' + timeLeft + 's';
+          return;
+        }
+
+        clearInterval(interval);
+        isCooldownActive = false;
+        setButtonsEnabled(true);
+        cooldownText.textContent = 'Ready to roll.';
+      }, 1000);
+    }
 
     function getRandomPokemon(type) {
       const source = type === 'any'
@@ -204,18 +272,37 @@
       return source[Math.floor(Math.random() * source.length)];
     }
 
+    function getSpriteUrl(pokemonId) {
+      return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + pokemonId + '.png';
+    }
+
     buttons.forEach(function (button) {
       button.addEventListener('click', function () {
+        if (isCooldownActive) {
+          return;
+        }
+
         const type = button.getAttribute('data-type');
         const roll = getRandomPokemon(type);
         const emoji = type === 'any' ? '⚪🔴' : typeEmoji[roll.type];
 
+        playRollSound();
+
         nameEl.textContent = emoji + ' ' + roll.name;
         metaEl.textContent = 'Type: ' + roll.type.charAt(0).toUpperCase() + roll.type.slice(1) + ' | Rarity: ' + roll.rarity;
+        spriteEl.src = getSpriteUrl(roll.id);
+        spriteEl.alt = roll.name + ' sprite';
+        spriteEl.hidden = false;
 
         resultCard.classList.remove('roll-pop');
         void resultCard.offsetWidth;
         resultCard.classList.add('roll-pop');
+
+        spriteEl.classList.remove('roll-sprite-pop');
+        void spriteEl.offsetWidth;
+        spriteEl.classList.add('roll-sprite-pop');
+
+        startCooldown();
       });
     });
   </script>

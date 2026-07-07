@@ -344,6 +344,13 @@ a {
   box-shadow: 0 8px 20px #5865f240;
 }
 
+.emoji-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .emoji-btn-ball {
   min-width: 84px;
   font-size: 1.2rem;
@@ -358,6 +365,15 @@ a {
   border-radius: 10px;
   text-align: center;
   padding: 1.2rem 1rem;
+}
+
+.roll-sprite {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  margin: 0 auto 0.2rem;
+  filter: drop-shadow(0 8px 18px #00000066);
 }
 
 .roll-label {
@@ -378,16 +394,49 @@ a {
 }
 
 .roll-pop {
-  animation: rollPop 220ms ease-out;
+  animation: rollPop 460ms cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+.roll-sprite-pop {
+  animation: spritePop 420ms ease-out;
+}
+
+.cooldown-text {
+  text-align: center;
+  margin-top: 0.9rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }
 
 @keyframes rollPop {
   0% {
-    transform: scale(0.96);
-    opacity: 0.6;
+    transform: scale(0.9) rotate(-1.3deg);
+    opacity: 0.5;
+    filter: brightness(1.4);
+  }
+  40% {
+    transform: scale(1.04) rotate(0.9deg);
+    opacity: 1;
+    filter: brightness(1.15);
   }
   100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes spritePop {
+  0% {
+    transform: scale(0.75) translateY(10px);
+    opacity: 0.2;
+  }
+  55% {
+    transform: scale(1.08) translateY(-2px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
     opacity: 1;
   }
 }
