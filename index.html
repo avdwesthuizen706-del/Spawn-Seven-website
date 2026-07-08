@@ -154,8 +154,8 @@
       <h3>Live Support</h3>
       <button id="supportClose" class="support-close" aria-label="Close live support">×</button>
     </div>
-    <p>If something is not working, message us in Discord and a staff member can help in real time.</p>
-    <a class="btn btn-primary support-action" href="https://discord.gg/yU9Uv5yzqP" target="_blank">Open Discord Support</a>
+    <p>If something is not working, start a live chat and a staff member can help in real time.</p>
+    <button id="supportChatNow" class="btn btn-primary support-action" type="button">Start Live Chat</button>
     <a class="support-secondary" href="review.html">Leave feedback instead</a>
   </aside>
 
@@ -213,6 +213,7 @@
     const supportLauncher = document.getElementById('supportLauncher');
     const supportPanel = document.getElementById('supportPanel');
     const supportClose = document.getElementById('supportClose');
+    const supportChatNow = document.getElementById('supportChatNow');
     const cooldownDuration = 3;
     let isCooldownActive = false;
 
@@ -227,6 +228,12 @@
 
     supportClose.addEventListener('click', function () {
       toggleSupportPanel(false);
+    });
+
+    supportChatNow.addEventListener('click', function () {
+      if (window.Tawk_API && typeof window.Tawk_API.maximize === 'function') {
+        window.Tawk_API.maximize();
+      }
     });
 
     function playRollSound() {
@@ -341,6 +348,20 @@
       }
     });
   </script>
+
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function () {
+      var s1 = document.createElement('script'), s0 = document.getElementsByTagName('script')[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/6a4dc9844d65411d4822e933/1jsvtmbg1';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+  <!--End of Tawk.to Script-->
 
 </body>
 </html>
