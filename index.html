@@ -231,9 +231,21 @@
     });
 
     supportChatNow.addEventListener('click', function () {
-      if (window.Tawk_API && typeof window.Tawk_API.maximize === 'function') {
-        window.Tawk_API.maximize();
+      if (window.Tawk_API) {
+        if (typeof window.Tawk_API.showWidget === 'function') {
+          window.Tawk_API.showWidget();
+        }
+        if (typeof window.Tawk_API.maximize === 'function') {
+          window.Tawk_API.maximize();
+        }
+        setTimeout(function () {
+          if (typeof window.Tawk_API.maximize === 'function') {
+            window.Tawk_API.maximize();
+          }
+        }, 120);
       }
+
+      toggleSupportPanel(false);
     });
 
     function playRollSound() {
@@ -352,9 +364,27 @@
   <!--Start of Tawk.to Script-->
   <script type="text/javascript">
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+
+    function hideTawkWidgetSafely() {
+      if (window.Tawk_API && typeof window.Tawk_API.hideWidget === 'function') {
+        window.Tawk_API.hideWidget();
+      }
+    }
+
     Tawk_API.onLoad = function () {
-      Tawk_API.hideWidget();
+      hideTawkWidgetSafely();
+      setTimeout(hideTawkWidgetSafely, 200);
+      setTimeout(hideTawkWidgetSafely, 900);
     };
+
+    Tawk_API.onChatMinimized = function () {
+      hideTawkWidgetSafely();
+    };
+
+    Tawk_API.onChatEnded = function () {
+      hideTawkWidgetSafely();
+    };
+
     (function () {
       var s1 = document.createElement('script'), s0 = document.getElementsByTagName('script')[0];
       s1.async = true;
